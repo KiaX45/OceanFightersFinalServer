@@ -1,14 +1,17 @@
 import express from "express";
 import { config } from "dotenv";
 import pg from "pg";
+import cors from "cors";
 
 const app = express(); //Nos va a permitir crear el servidor
+
+app.use(cors()); //Nos va a permitir que el servidor acepte peticiones de cualquier origen
 
 config(); //Nos va a permitir leer las variables de entorno
 
 const pool = new pg.Pool({
   connectionString: process.env.Database_Url,
-  ssl: true,
+  //ssl: true,
 });
 
 app.listen(3000) // lo que decimos es que se va a ejecutar en el puerto 3000
