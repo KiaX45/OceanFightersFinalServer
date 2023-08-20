@@ -64,12 +64,14 @@ app.post("/AnadirUsuarios", async (req, res) => {
 
     // Validar que los campos necesarios estén presentes
     if (!email || !username || !contraseña) {
-      return res.status(400).send("Faltan campos obligatorios");
+      return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
     //validar si la contraseña tiene al menos 8 caracteres
     if (contraseña.length < 8) {
-      return res.status(400).send("La contraseña debe tener al menos 8 caracteres");
+      return res
+        .status(400)
+        .json({ error: "La contraseña debe tener al menos 8 caracteres" });
     }
 
     // Verificar si el email o el username ya están en uso
@@ -83,11 +85,13 @@ app.post("/AnadirUsuarios", async (req, res) => {
     );
 
     if (emailExistente.rows.length > 0) {
-      return res.status(400).send("El email ya está en uso");
+      return res.status(400).json({ error: "El email ya está en uso" });
     }
 
     if (usernameExistente.rows.length > 0) {
-      return res.status(400).send("El nombre de usuario ya está en uso");
+      return res
+        .status(400)
+        .json({ error: "El nombre de usuario ya está en uso" });
     }
 
     // Hashear la contraseña
@@ -104,8 +108,9 @@ app.post("/AnadirUsuarios", async (req, res) => {
     res.json(result.rows[0]);
   } catch (error) {
     console.error("Error al guardar el usuario:", error);
-    res.status(500).send("Error al guardar el usuario");
+    res.status(500).json({ error: "Error al guardar el usuario" });
   }
 });
+
 
 console.log("Server on port", 3000);
