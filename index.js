@@ -57,7 +57,7 @@ app.get("/create-tables", async (req, res) => {
 app.use(express.json());
 
 //vamos a crear un ENDPOINT para crear usuarios
-app.post("/AñadirUsuarios", async (req, res) => {
+app.post("/AnadirUsuarios", async (req, res) => {
   try {
     //primero vamos a obtener los datos del usuario y los vamos a guardar en variables
     const { imagen, email, username, contraseña, esAdministrador } = req.body;
@@ -65,6 +65,11 @@ app.post("/AñadirUsuarios", async (req, res) => {
     // Validar que los campos necesarios estén presentes
     if (!email || !username || !contraseña) {
       return res.status(400).send("Faltan campos obligatorios");
+    }
+
+    //validar si la contraseña tiene al menos 8 caracteres
+    if (contraseña.length < 8) {
+      return res.status(400).send("La contraseña debe tener al menos 8 caracteres");
     }
 
     // Verificar si el email o el username ya están en uso
