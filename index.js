@@ -2,6 +2,7 @@ import express from "express";
 import { config } from "dotenv";
 import pg from "pg";
 import cors from "cors";
+import bcrypt from "bcrypt";
 
 const app = express(); //Nos va a permitir crear el servidor
 
@@ -83,6 +84,10 @@ app.post("/AñadirUsuarios", async (req, res) => {
     if (usernameExistente.rows.length > 0) {
       return res.status(400).send("El nombre de usuario ya está en uso");
     }
+
+    // Hashear la contraseña
+    const salt = await bcrypt.genSalt(10);
+    const contraseñaHasheada = await bcrypt.hash(contraseña, salt);
 
     // Guardar el usuario en la base de datos
     const result = await pool.query(
