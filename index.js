@@ -9,6 +9,7 @@ const app = express(); //Nos va a permitir crear el servidor
 app.use(cors()); //Nos va a permitir que el servidor acepte peticiones de cualquier origen
 
 config(); //Nos va a permitir leer las variables de entorno
+console.log("Cadena de conexión a la base de datos:", process.env.Database_Url);
 
 const pool = new pg.Pool({
   connectionString: process.env.Database_Url,
