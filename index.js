@@ -51,4 +51,51 @@ app.get("/create-tables", async (req, res) => {
   }
 });
 
+
+// Asegúrate de que express pueda parsear el cuerpo de las solicitudes JSON
+app.use(express.json());
+
+//vamos a crear un ENDPOINT para crear usuarios
+app.post("/AñadirUsuarios", async (req, res) => {
+  try {
+    //primero vamos a obtener los datos del usuario y los vamos a guardar en variables
+    const { imagen, email, username, contraseña, esAdministrador } = req.body;
+
+    // Validar que los campos necesarios estén presentes
+    if (!email || !username || !contraseña) {
+      return res.status(400).send("Faltan campos obligatorios");
+    }
+
+    // Verificar si el email o el username ya están en uso
+    const emailExistente = await pool.query(
+      "SELECT email FROM usuarios WHERE email = $1",
+      [email]
+    );
+    const usernameExistente = await pool.query(
+      "SELECT username FROM usuarios WHERE username = $1",
+      [username]
+    );
+
+    if (emailExistente.rows.length > 0) {
+      return res.status(400).send("El email ya está en uso");
+    }
+
+    if (usernameExistente.rows.length > 0) {
+      return res.status(400).send("El nombre de usuario ya está en uso");
+    }
+
+    // Guardar el usuario en la base de datos
+    const result = await pool.query(
+      "INSERT INTO usuarios (imagen, email, username, contraseña, esAdministrador) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [imagen, email, username, contraseñaHasheada, esAdministrador]
+    );
+
+    // Devolver el usuario creado
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error al guardar el usuario:", error);
+    res.status(500).send("Error al guardar el usuario");
+  }
+});
+
 console.log("Server on port", 3000);
